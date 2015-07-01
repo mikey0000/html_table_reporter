@@ -1,11 +1,11 @@
 var path = require('path');
 var fs = require('fs');
 var colors = require('chalk');
-var config = require('./config');
+var options = require('./config');
 
 var root = {};
 
-module.exports = function(runner) {
+module.exports = function(runner, options) {
     var status = {
         pass: 0,
         fail: 0,
@@ -15,7 +15,7 @@ module.exports = function(runner) {
 
     runner.on('start', function() {
         console.log('Mocha HTML Table Reporter v1.6.3\nNOTE: Tests sequence must complete to generate html report');
-        console.log("Run Mode: " + config.mode + "\n");
+        console.log("Run Mode: " + options.mode + "\n");
     });
 
     runner.on('end', function() {
@@ -50,8 +50,8 @@ module.exports = function(runner) {
         doc += '<div id="reportTable">' + displayHTML(root) + '</div></body></html>'; // compile tests and finish the doc
 
         var filePath;
-        if (config.filename != '') {
-            filePath = path.join(config.path, config.filename);
+        if (options.filename != '') {
+            filePath = path.join(options.path, options.filename);
         }
 
         console.log('\n');
@@ -80,7 +80,7 @@ module.exports = function(runner) {
         suite.depth = depth;
         suite.guid = guid();
 
-        if (!suite.root && config.mode != config.SILENT) console.log(textIndent(depth) + suite.title);
+        if (!suite.root && options.mode != options.SILENT) console.log(textIndent(depth) + suite.title);
 
     });
 
@@ -125,9 +125,9 @@ module.exports = function(runner) {
             } else if (state == 'passed') {
                 status.pass++;
                 status.duration += (test.duration != undefined) ? test.duration : 0;
-                if (config.mode == config.SILENT) return; // if running silent mode dont print anything
+                if (options.mode == options.SILENT) return; // if running silent mode dont print anything
                 
-                if (config.mode == config.VERBOSE && test.log != undefined) {
+                if (options.mode == options.VERBOSE && test.log != undefined) {
 
                      tests += '<table cellspacing="0" cellpadding="0">' +
                         '<tr id="' + id + 'pass' + status.pass + '" onclick="showHide(\'' + id + 'pass' + status.pass + '\', \'' + id + '\')" class="' + id + ' passed passlog">' +
@@ -163,7 +163,7 @@ module.exports = function(runner) {
 
             } else if (test.pending) {
                 status.pending++;
-                if (config.mode != config.SILENT) {
+                if (options.mode != options.SILENT) {
                     tests += '<table cellspacing="0" cellpadding="0">' +
                         '<tr class="' + id + ' pending" >' +
                         addIndentation(depth + 1) +
@@ -195,12 +195,12 @@ module.exports = function(runner) {
 
     runner.on('pass', function(test) {
         var depth = test.parent.depth + 1;
-        if (config.mode != config.SILENT) {
+        if (options.mode != options.SILENT) {
             var output = colors.green(textIndent(depth) + '√ ' + test.title) + colors.gray(" <" + test.duration + ">");
             console.log(output);
         }
 
-        if (config.mode == config.VERBOSE && test.ctx.log != undefined) {
+        if (options.mode == options.VERBOSE && test.ctx.log != undefined) {
             test.log = test.ctx.log;
             test.ctx.log = undefined;
             var output = colors.grey(textIndent(depth+1) + test.log);
@@ -210,7 +210,7 @@ module.exports = function(runner) {
 
     runner.on('pending', function(test) {
         var depth = test.parent.depth + 1;
-        if (config.mode != config.SILENT) {
+        if (options.mode != options.SILENT) {
             var output = colors.cyan(textIndent(depth) + '» ' + test.title) + colors.gray(" <pending>");
             console.log(output);
         }
@@ -220,9 +220,9 @@ module.exports = function(runner) {
         test.err = err;
         var depth = test.parent.depth + 1;
         var output = '';
-        if (config.mode == config.SILENT) output += textIndent(depth - 1) + test.parent.title + '\n';
+        if (options.mode == options.SILENT) output += textIndent(depth - 1) + test.parent.title + '\n';
         output += colors.red(textIndent(depth) + 'x ' + test.title) + colors.gray(" <" + ((test.duration) ? test.duration : "NaN") + ">");
-        if (config.mode == config.SILENT || config.mode == config.VERBOSE) output += colors.gray('\n' + textIndent(depth + 1) + test.err);
+        if (options.mode == options.SILENT || options.mode == options.VERBOSE) output += colors.gray('\n' + textIndent(depth + 1) + test.err);
         console.log(output);
     });
 }

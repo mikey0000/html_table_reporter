@@ -1,6 +1,6 @@
 {
-  "name": "good-mocha-html-reporter",
-  "version": "1.6.3",
+  "name": "good-mocha-html-reporter-with-options",
+  "version": "1.0.0",
   "description": "A visually appealing html reporter for mocha",
   "keywords": [
     "mocha",
