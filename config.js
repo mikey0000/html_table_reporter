@@ -1,6 +1,6 @@
 module.exports = {
 	path: '', // full or relative path (relative to your execution folder)
-	filename: 'report.html',
+	filename: 'build/report.html',
 
 	/*
 		Modes: COMPACT, VERBOSE, SILENT

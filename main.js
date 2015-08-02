@@ -1,7 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 var colors = require('chalk');
-var options = require('./config');
+var defaults = require('./config');
 
 var root = {};
 
@@ -12,6 +12,8 @@ module.exports = function(runner, options) {
         pending: 0,
         duration: 0
     };
+
+    options = (options.reporterOptions || defaults);
 
     runner.on('start', function() {
         console.log('Mocha HTML Table Reporter v1.6.3\nNOTE: Tests sequence must complete to generate html report');
@@ -80,7 +82,10 @@ module.exports = function(runner, options) {
         suite.depth = depth;
         suite.guid = guid();
 
-        if (!suite.root && options.mode != options.SILENT) console.log(textIndent(depth) + suite.title);
+        var name = suite.name ? suite.name + ' ' : '';
+        var title = name + suite.title;
+
+        if (!suite.root && options.mode != options.SILENT) console.log(textIndent(depth) + title);
 
     });
 
@@ -99,15 +104,18 @@ module.exports = function(runner, options) {
         suite.tests.forEach(function(test, index, array) {
             var state = test.state
 
+            var name = test.name ? test.name + ' ' : '';
+            var title = name + test.title;
+
             if (state == 'failed') {
                 status.fail++;
                 status.duration += (test.duration != undefined) ? test.duration : 0;
                 tests += '<table cellspacing="0" cellpadding="0">' +
                     '<tr id="' + id + 'err' + status.fail + '" onclick="showHide(\'' + id + 'err' + status.fail + '\', \'' + id + '\')" class="' + id + ' failed">' +
                     addIndentation(depth + 1) + // tests reside one step deaper than its parent suite
-                    '<td id="image" class="expanded"></td>' +
+                '<td id="image" class="expanded"></td>' +
                     '<td class="duration">' + test.duration + ' ms</td>' +
-                    '<td class="title">' + test.title + '</td>' +
+                    '<td class="title">' + title + '</td>' +
                     '<td class="failedState">Failed</td>' +
                     '</tr>' +
                     '</table>';
@@ -126,15 +134,15 @@ module.exports = function(runner, options) {
                 status.pass++;
                 status.duration += (test.duration != undefined) ? test.duration : 0;
                 if (options.mode == options.SILENT) return; // if running silent mode dont print anything
-                
+
                 if (options.mode == options.VERBOSE && test.log != undefined) {
 
-                     tests += '<table cellspacing="0" cellpadding="0">' +
+                    tests += '<table cellspacing="0" cellpadding="0">' +
                         '<tr id="' + id + 'pass' + status.pass + '" onclick="showHide(\'' + id + 'pass' + status.pass + '\', \'' + id + '\')" class="' + id + ' passed passlog">' +
                         addIndentation(depth + 1) + // tests reside one step deaper than its parent suite
-                        '<td id="image" class="expanded"></td>' +
+                    '<td id="image" class="expanded"></td>' +
                         '<td class="duration">' + test.duration + ' ms</td>' +
-                        '<td class="title">' + test.title + '</td>' +
+                        '<td class="title">' + title + '</td>' +
                         '<td class="passedState">Passed</td>' +
                         '</tr>' +
                         '</table>';
@@ -153,13 +161,13 @@ module.exports = function(runner, options) {
                     tests += '<table cellspacing="0" cellpadding="0">' +
                         '<tr class="' + id + ' passed" >' +
                         addIndentation(depth + 1) + // tests reside one step deaper than its parent suite
-                        '<td class="durationPorP">' + test.duration + ' ms</td>' +
-                        '<td class="title">' + test.title + '</td>' +
+                    '<td class="durationPorP">' + test.duration + ' ms</td>' +
+                        '<td class="title">' + title + '</td>' +
                         '<td class="passedState">Passed</td>' +
                         '</tr>' +
                         '</table>';
                 }
-                
+
 
             } else if (test.pending) {
                 status.pending++;
@@ -168,7 +176,7 @@ module.exports = function(runner, options) {
                         '<tr class="' + id + ' pending" >' +
                         addIndentation(depth + 1) +
                         '<td class="durationPorP">0 ms</td>' +
-                        '<td class="title">' + test.title + '</td>' +
+                        '<td class="title">' + title + '</td>' +
                         '<td class="pendingState">Pending</td>' +
                         '</tr>' +
                         '</table>';
@@ -177,12 +185,14 @@ module.exports = function(runner, options) {
         });
 
         var result = generateResult(suite);
+        var name = suite.name ? suite.name + ' ' : '';
+        var title = name + suite.title;
         var display = '';
         display += '<table cellspacing="0" cellpadding="0">' +
             '<tr id="' + id + '" onclick="showHide(\'' + id + '\', \'' + pid + '\')" class="' + pid + ' suite">' +
             addIndentation(depth) +
             '<td id="image" class="expanded"></td>' +
-            '<td class="title">' + suite.title + '</td>' +
+            '<td class="title">' + title + '</td>' +
             '<td class="subTotal" style="color: DarkGreen;">Pass: ' + result.pass + '</td>' +
             '<td class="subTotal" style="color: DarkRed;">Fail: ' + result.fail + '</td>' +
             '<td class="subTotal" style="color: DarkBlue;">Pend: ' + result.pending + '</td>' +
@@ -194,34 +204,40 @@ module.exports = function(runner, options) {
     });
 
     runner.on('pass', function(test) {
+        var name = test.name ? test.name + ' ' : '';
+        var title = name + test.title;
         var depth = test.parent.depth + 1;
         if (options.mode != options.SILENT) {
-            var output = colors.green(textIndent(depth) + '√ ' + test.title) + colors.gray(" <" + test.duration + ">");
+            var output = colors.green(textIndent(depth) + '√ ' + title) + colors.gray(" <" + test.duration + ">");
             console.log(output);
         }
 
         if (options.mode == options.VERBOSE && test.ctx.log != undefined) {
             test.log = test.ctx.log;
             test.ctx.log = undefined;
-            var output = colors.grey(textIndent(depth+1) + test.log);
+            var output = colors.grey(textIndent(depth + 1) + test.log);
             console.log(output);
         }
     });
 
     runner.on('pending', function(test) {
+        var name = test.name ? test.name + ' ' : '';
+        var title = name + test.title;
         var depth = test.parent.depth + 1;
         if (options.mode != options.SILENT) {
-            var output = colors.cyan(textIndent(depth) + '» ' + test.title) + colors.gray(" <pending>");
+            var output = colors.cyan(textIndent(depth) + '» ' + title) + colors.gray(" <pending>");
             console.log(output);
         }
     });
 
     runner.on('fail', function(test, err) {
+        var name = test.name ? test.name + ' ' : '';
+        var title = name + test.title;
         test.err = err;
         var depth = test.parent.depth + 1;
         var output = '';
         if (options.mode == options.SILENT) output += textIndent(depth - 1) + test.parent.title + '\n';
-        output += colors.red(textIndent(depth) + 'x ' + test.title) + colors.gray(" <" + ((test.duration) ? test.duration : "NaN") + ">");
+        output += colors.red(textIndent(depth) + 'x ' + title) + colors.gray(" <" + ((test.duration) ? test.duration : "NaN") + ">");
         if (options.mode == options.SILENT || options.mode == options.VERBOSE) output += colors.gray('\n' + textIndent(depth + 1) + test.err);
         console.log(output);
     });
