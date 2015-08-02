@@ -3,26 +3,27 @@
 	<style type="text/css">
 		/* general */
 		body {
-			background-color: SeaShell;
 			min-width: 1000px;
+			font-family: sans-serif;
 		}
 
 		div#reportTable {
 			margin-left: auto; 
 			margin-right: auto;
 			width: 90%;
-			border: 5px ridge #E3EAF2;
+			border: 1px solid #333
 		}
 		
 		table {
 			width: 100%;
 			border-collapse: collapse;   
-			background-color: #E7EDF5; 
+			 
 			table-layout: fixed;
 		}
 		td {
 			border-left: 1px solid black;
 			border-bottom: 1px solid black;
+			padding: 2px 5px;
 			word-break: break-word;
 		}
 
@@ -30,14 +31,14 @@
 			background-repeat: no-repeat;
 			width: 16;
 			height: 16;
-			background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA9QTFRFeXl53d3dmpqasbGx////GU0iEgAAAAV0Uk5T/////wD7tg5TAAAAK0lEQVQI12NwgQIG0hhCDAwMTCJAhqMCA4MiWEoIJABiOCooQhULi5BqMgB2bh4svs8t+QAAAABJRU5ErkJggg==');
+			background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDQ4IDQ4IiB3aWR0aD0iMTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE0LjgzIDE2LjQybDkuMTcgOS4xNyA5LjE3LTkuMTcgMi44MyAyLjgzLTEyIDEyLTEyLTEyeiIvPjxwYXRoIGQ9Ik0wLS43NWg0OHY0OGgtNDh6IiBmaWxsPSJub25lIi8+PC9zdmc+');
 		}
 
 		.collapsed {
 			background-repeat: no-repeat;
 			width: 16;
 			height: 16;
-			background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURXl5ed3d3ZqamrGxsf///xlNIhIAAAAFdFJOU/////8A+7YOUwAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAvSURBVBjTY3CBAlSGI4whBGU4KkAZQgwQhqMClOHMgC4CV4PQBTcHYbILFoaLCwCrIB7+CSEIHAAAAABJRU5ErkJggg==');
+			background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDQ4IDQ4IiB3aWR0aD0iMTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE3LjE3IDMyLjkybDkuMTctOS4xNy05LjE3LTkuMTcgMi44My0yLjgzIDEyIDEyLTEyIDEyeiIvPjxwYXRoIGQ9Ik0wLS4yNWg0OHY0OGgtNDh6IiBmaWxsPSJub25lIi8+PC9zdmc+');
 		}
 
 		.indent {
@@ -46,7 +47,7 @@
 
 		/* suite */
 		.suite {
-			border-bottom: 4px ridge gray;
+			border-bottom: 1px #eee;
 		}
 
 		.subTotal {
@@ -130,6 +131,7 @@
 			border:none;
 		}
 
+	
 	</style>
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
